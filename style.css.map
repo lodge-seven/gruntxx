@@ -1,0 +1,7 @@
+{
+"version": 3,
+"mappings": "AAAA,KAAK;EACJ,KAAK,EAAE,GAAG;EACV,SAAS,EAAE,IAAI",
+"sources": ["../../node%E5%8C%85/gruntxx/scss/style.scss"],
+"names": [],
+"file": "style.css"
+}
