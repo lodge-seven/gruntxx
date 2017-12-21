@@ -51,10 +51,10 @@ module.exports = function(grunt) {
     // 监听三个文件，如果变动，自动刷新
     watchConfig.livereload = {
         options: { livereload: '<%= connect.options.livereload %>' },
-        files: [ 'index.html', 'style.css', 'js/global.min.js' ]
+        files: [ '*.html', 'style.css', 'js/global.min.js' ]
     };
 
-    // 2.6 建立本地服务器
+    // 2.6 建立本地服务器：配置grunt-contrib-connect参数
     var connectConfig = {};
     connectConfig.options = {
         port: 9000,
@@ -67,6 +67,24 @@ module.exports = function(grunt) {
         base: './'
     }
 
+    // 2.7 通过postcss中插件加工你的css：配置grunt-postcss参数
+    var postcssConfig = {};
+    // 配置postcss所需插件
+    /* 
+        postcss常用插件
+        autoprefixer（处理浏览器私有前缀）
+        cssnext（css未来的语法）
+        precss（Sass） 
+    */
+    postcssConfig.options = {
+        map: true,
+        processors: [ require('autoprefixer')(), require('precss')() ]
+    };
+    // 设置源文件和用postcss编译后的文件
+    postcssConfig.dist = {
+        src: 'css/*.css'
+    };
+
     // 3 加入到grunt配置参数中
     gruntConfig.sass = sassConfig;
     gruntConfig.concat = concatConfig;
@@ -74,6 +92,7 @@ module.exports = function(grunt) {
     gruntConfig.uglify = uglifyConfig;
     gruntConfig.watch = watchConfig;
     gruntConfig.connect = connectConfig;
+    gruntConfig.postcss = postcssConfig;
     // console.log(gruntConfig)
 
     // 4 初始化参数配置    
@@ -86,7 +105,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-connect');
-
+    grunt.loadNpmTasks('grunt-postcss');
     // 6 注册任务
     /* 
         第一个参数是任务命名，第二个参数是调用的参数 
@@ -95,7 +114,8 @@ module.exports = function(grunt) {
     grunt.registerTask('concatjs', ['concat']);
     grunt.registerTask('compressjs', ['concat', 'uglify', 'jshint']);
     // 终极任务：之前的所有操作执行一遍，之后连接到本地服务器，实时监听文件变化
-    grunt.registerTask('watchit', ['sass', 'concat', 'jshint', 'uglify', 'connect', 'watch']);
+    grunt.registerTask('watchit', ['concat', 'jshint', 'uglify', 'connect', 'watch']);
+    grunt.registerTask('postCss', ['postcss']);
     grunt.registerTask('default');
 }
 
